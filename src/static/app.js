@@ -20,14 +20,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+          // Participants list markup
+          let participantsMarkup = "";
+          if (details.participants && details.participants.length > 0) {
+            participantsMarkup = `
+              <div class="participants-section">
+                <strong>Participants:</strong>
+                <div class="participants-list">
+                  ${details.participants.map(email => `
+                    <span class="participant-item" data-activity="${name}" data-email="${email}">${email}
+                      <span class="delete-icon" title="Remove">&#128465;</span>
+                    </span>
+                  `).join("")}
+                </div>
+              </div>
+            `;
+          } else {
+            participantsMarkup = `
+              <div class="participants-section">
+                <strong>Participants:</strong>
+                <p class="no-participants">No participants yet</p>
+              </div>
+            `;
+          }
+
+          activityCard.innerHTML = `
+            <h4>${name}</h4>
+            <p>${details.description}</p>
+            <p><strong>Schedule:</strong> ${details.schedule}</p>
+            <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+            ${participantsMarkup}
+          `;
 
         activitiesList.appendChild(activityCard);
+
+        // 削除アイコンのクリックイベントを追加
+        setTimeout(() => {
+          const deleteIcons = activityCard.querySelectorAll(".delete-icon");
+          deleteIcons.forEach(icon => {
+            icon.addEventListener("click", async (e) => {
+              e.stopPropagation();
+              const participantSpan = icon.closest(".participant-item");
+              const activity = participantSpan.getAttribute("data-activity");
+              const email = participantSpan.getAttribute("data-email");
+              if (confirm(`Remove ${email} from ${activity}?`)) {
+                try {
+                  const response = await fetch(`/activities/${encodeURIComponent(activity)}/unregister?email=${encodeURIComponent(email)}`, {
+                    method: "POST"
+                  });
+                  if (response.ok) {
+                    participantSpan.remove();
+                  } else {
+                    alert("Failed to remove participant.");
+                  }
+                } catch {
+                  alert("Error occurred while removing participant.");
+                }
+              }
+            });
+          });
+        }, 0);
 
         // Add option to select dropdown
         const option = document.createElement("option");
