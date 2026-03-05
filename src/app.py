@@ -39,6 +39,19 @@ activities = {
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
     }
+    ,
+    "Art Club": {
+        "description": "Explore painting, drawing, and creative arts",
+        "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+    },
+    "Science Club": {
+        "description": "Conduct experiments and learn about science topics",
+        "schedule": "Thursdays, 3:30 PM - 5:00 PM",
+        "max_participants": 18,
+        "participants": ["liam@mergington.edu", "ava@mergington.edu"]
+    }
 }
 
 
